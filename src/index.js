@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './index.css';
 
 function Square(props) {
   return (
@@ -74,7 +75,7 @@ class Game extends React.Component {
     });
   }
 
-  jumptTo(step) {
+  jumpTo(step) {
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
