@@ -57,8 +57,9 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const { player: winner } = calculateWinner(squares);
 
-    if (calculateWinner(squares).player || squares[i]) {
+    if (winner !== "None" || squares[i]) {
       return;
     }
 
@@ -90,7 +91,15 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const { player: winningPlayer, line: winningLine } = calculateWinner(current.squares);
-    const status = winningPlayer ? `Winner ${winningPlayer}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`; 
+
+    let status = "";
+    if (["X", "O"].includes(winningPlayer)) {
+      status = `Winner ${winningPlayer}!`;
+    } else if (winningPlayer === "None") {
+      status = `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+    } else {
+      status = `Draw!`;
+    }
 
     const moves = history.map((step, move) => {
       const desc = move ? `Go to move #${move} with ${step.squares[step.position]} on ${getCoordinates(step.position)}` : `Go to game start`;
@@ -147,7 +156,11 @@ function calculateWinner(squares) {
     }
   }
 
-  return { player: null, line: [] };
+  if (squares.includes(null)) {
+    return { player: "None", line: [] };
+  }
+
+  return { player: "Draw", line: [] };
 }
 
 function getCoordinates(i) {
