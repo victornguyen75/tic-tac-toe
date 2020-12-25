@@ -4,7 +4,9 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button
+      className={"square " + (props.isWinning ? "winning" : null )}
+      onClick={props.onClick}>
       {props.value}
     </button>
   );
@@ -15,6 +17,7 @@ class Board extends React.Component {
     return (
       <Square
         value={this.props.squares[i]}
+        isWinning={this.props.winningSquares.includes(i)}
         onClick={() => this.props.onClick(i)}
       />
     );
@@ -55,7 +58,7 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
 
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares).player || squares[i]) {
       return;
     }
 
@@ -86,8 +89,8 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
-    const status = winner ? `Winner ${winner}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`; 
+    const { player: winningPlayer, line: winningLine } = calculateWinner(current.squares);
+    const status = winningPlayer ? `Winner ${winningPlayer}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`; 
 
     const moves = history.map((step, move) => {
       const desc = move ? `Go to move #${move} with ${step.squares[step.position]} on ${getCoordinates(step.position)}` : `Go to game start`;
@@ -105,6 +108,7 @@ class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board
+            winningSquares={winningPlayer ? winningLine : []}
             squares={current.squares}
             onClick={i => this.handleClick(i)}
           />
@@ -139,11 +143,11 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { player: squares[a], line: [a, b, c] };
     }
   }
 
-  return null;
+  return { player: null, line: [] };
 }
 
 function getCoordinates(i) {
