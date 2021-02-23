@@ -112,7 +112,9 @@ export default function Game() {
 
             return (
               <li key={move}>
-                <button onClick={() => jumpTo(move)}>{desc}</button>
+                <button onClick={() => jumpTo(move)}>
+                  {move === state.stepNumber ? <b>{desc}</b> : desc}
+                </button>
               </li>
             );
           })}
