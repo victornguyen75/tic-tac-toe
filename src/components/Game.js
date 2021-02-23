@@ -1,6 +1,34 @@
 import React, { useState } from "react";
 import Board from "./Board";
 
+/**
+ * Dev note: using setState from the class components is slightly different from
+ * that of the functional, "hooked" components. 
+ * 
+ * If jumpTo was rewritten like this for a class component, then the state will not 
+ * completely overwrite the history and isDescending variables.
+ * 
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+  
+ * However, if it was implemented in a functional, "hooked" component, then the state
+ * will overwrite the history and isDescending variables.
+ * 
+ * As a result, the jumpTo function has to be slightly updated for this component:
+ 
+ jumpTo(step) {
+    this.setState({
+      ...state,
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+ */
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -20,7 +48,11 @@ function calculateWinner(squares) {
     }
   }
 
-  return { winningPlayer: null, winningLine: [] };
+  if (squares.includes(null)) {
+    return { winningPlayer: "None", winningLine: [] };
+  } else {
+    return { winningPlayer: "Draw", winningLing: [] };
+  }
 }
 
 function getCoordinates(i) {
@@ -65,15 +97,19 @@ export default function Game() {
   let status = "";
   if (["X", "O"].includes(winningPlayer)) {
     status = `Winner: ${winningPlayer}`;
+  } else if (winningPlayer === "Draw") {
+    status = "Draw!";
   } else {
     status = `Next Player: ${state.xIsNext ? "X" : "O"}`;
   }
 
   const handleClick = (i) => {
     const newHistory = state.history.slice(0, state.stepNumber + 1);
-    const updated = newHistory[newHistory.length - 1];
-    const updatedSquares = updated.squares.slice();
-    if (calculateWinner(updatedSquares).winningPlayer || updatedSquares[i]) {
+    const latestMove = newHistory[newHistory.length - 1];
+    const updatedSquares = latestMove.squares.slice();
+    const { winningPlayer } = calculateWinner(updatedSquares);
+
+    if (winningPlayer !== "None" || updatedSquares[i]) {
       return;
     }
 
@@ -126,7 +162,7 @@ export default function Game() {
         <Board
           squares={current.squares}
           onClick={handleClick}
-          winningLine={winningPlayer ? winningLine : []}
+          winningLine={["X", "O"].includes(winningPlayer) ? winningLine : []}
         />
       </div>
       <div className="game-info">
