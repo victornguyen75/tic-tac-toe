@@ -25,12 +25,17 @@ function calculateWinner(squares) {
 
 export default function Game() {
   const [state, setState] = useState({
-    squares: Array(9).fill(null),
+    history: [
+      {
+        squares: Array(9).fill(null),
+      },
+    ],
     xIsNext: true,
   });
 
-  const winner = calculateWinner(state.squares);
-
+  const history = state.history;
+  const current = history[history.length - 1];
+  const winner = calculateWinner(current.squares);
   let status = "";
   if (["X", "O"].includes(winner)) {
     status = `Winner: ${winner}`;
@@ -39,18 +44,24 @@ export default function Game() {
   }
 
   const handleClick = (i) => {
-    if (calculateWinner(state.squares) || state.squares[i]) {
+    if (calculateWinner(current.squares) || current.squares[i]) {
       return;
     }
 
-    const updatedSquares = state.squares.slice();
+    const updatedSquares = current.squares.slice();
     updatedSquares[i] = state.xIsNext ? "X" : "O";
-    setState({ squares: updatedSquares, xIsNext: !state.xIsNext });
+    setState({
+      history: history.concat({
+        squares: updatedSquares,
+      }),
+      xIsNext: !state.xIsNext,
+    });
   };
+
   return (
     <div className="game">
       <div className="game-board">
-        <Board squares={state.squares} onClick={handleClick} />
+        <Board squares={current.squares} onClick={handleClick} />
       </div>
       <div className="game-info">
         <div>{status}</div>
