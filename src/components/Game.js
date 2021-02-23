@@ -16,11 +16,11 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i += 1) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { winningPlayer: squares[a], winningLine: lines[i] };
     }
   }
 
-  return null;
+  return { winningPlayer: null, winningLine: null };
 }
 
 function getCoordinates(i) {
@@ -61,10 +61,10 @@ export default function Game() {
 
   const history = state.history;
   const current = history[state.stepNumber];
-  const winner = calculateWinner(current.squares);
+  const { winningPlayer, winningLine } = calculateWinner(current.squares); // *
   let status = "";
-  if (["X", "O"].includes(winner)) {
-    status = `Winner: ${winner}`;
+  if (["X", "O"].includes(winningPlayer)) {
+    status = `Winner: ${winningPlayer}`;
   } else {
     status = `Next Player: ${state.xIsNext ? "X" : "O"}`;
   }
@@ -73,7 +73,8 @@ export default function Game() {
     const newHistory = state.history.slice(0, state.stepNumber + 1);
     const updated = newHistory[newHistory.length - 1];
     const updatedSquares = updated.squares.slice();
-    if (calculateWinner(updatedSquares) || updatedSquares[i]) {
+    if (calculateWinner(updatedSquares).winningPlayer || updatedSquares[i]) {
+      // *
       return;
     }
 
@@ -92,6 +93,7 @@ export default function Game() {
   const jumpTo = (step) => {
     setState({
       ...state,
+      stepNumber: step,
       xIsNext: step % 2 === 0,
     });
   };
@@ -122,7 +124,11 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board squares={current.squares} onClick={handleClick} />
+        <Board
+          squares={current.squares}
+          onClick={handleClick}
+          winningLine={winningLine}
+        />
       </div>
       <div className="game-info">
         <div>{status}</div>
