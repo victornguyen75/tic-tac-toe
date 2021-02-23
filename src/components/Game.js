@@ -56,6 +56,7 @@ export default function Game() {
     ],
     stepNumber: 0,
     xIsNext: true,
+    isDescending: true,
   });
 
   const history = state.history;
@@ -78,6 +79,7 @@ export default function Game() {
 
     updatedSquares[i] = state.xIsNext ? "X" : "O";
     setState({
+      ...state,
       history: newHistory.concat({
         squares: updatedSquares,
         position: i,
@@ -89,11 +91,33 @@ export default function Game() {
 
   const jumpTo = (step) => {
     setState({
-      history,
-      stepNumber: step,
+      ...state,
       xIsNext: step % 2 === 0,
     });
   };
+
+  const sortHistory = () => {
+    setState({
+      ...state,
+      isDescending: !state.isDescending,
+    });
+  };
+
+  const moves = history.map((step, move) => {
+    const desc = move
+      ? `Go to move #${move} with ${
+          step.squares[step.position]
+        } on ${getCoordinates(step.position)}`
+      : "Go to game start";
+
+    return (
+      <li key={move}>
+        <button type="button" onClick={() => jumpTo(move)}>
+          {move === state.stepNumber ? <b>{desc}</b> : desc}
+        </button>
+      </li>
+    );
+  });
 
   return (
     <div className="game">
@@ -102,23 +126,10 @@ export default function Game() {
       </div>
       <div className="game-info">
         <div>{status}</div>
-        <ol>
-          {history.map((step, move) => {
-            const desc = move
-              ? `Go to move #${move} with ${
-                  step.squares[step.position]
-                } on ${getCoordinates(step.position)}`
-              : "Go to game start";
-
-            return (
-              <li key={move}>
-                <button onClick={() => jumpTo(move)}>
-                  {move === state.stepNumber ? <b>{desc}</b> : desc}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+        <button type="button" onClick={() => sortHistory()}>
+          Sort by {state.isDescending ? "Descending" : "Ascending"}
+        </button>
+        <ol>{state.isDescending ? moves : moves.reverse()}</ol>
       </div>
     </div>
   );
