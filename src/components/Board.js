@@ -4,13 +4,14 @@ import Square from "./Square";
 export default function Board() {
   const [state, setState] = useState({
     squares: Array(9).fill(null),
+    xIsNext: true,
   });
-  const status = "Next Player: X";
+  const status = `Next Player: ${state.xIsNext ? "X" : "O"}`;
 
   const handleClick = (i) => {
     const updatedSquares = state.squares.slice();
     updatedSquares[i] = "X";
-    setState({ squares: updatedSquares });
+    setState({ squares: updatedSquares, xIsNext: !state.xIsNext });
   };
 
   const renderSquare = (i) => {
