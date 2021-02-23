@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Square from "./Square";
 
 export default function Board(props) {
@@ -26,3 +27,13 @@ export default function Board(props) {
     </>
   );
 }
+
+Board.propTypes = {
+  squares: PropTypes.arrayOf(PropTypes.string),
+  onClick: PropTypes.func,
+};
+
+Board.defaultProps = {
+  squares: Array(9).fill(null),
+  onClick: () => {},
+};
