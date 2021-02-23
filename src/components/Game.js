@@ -23,11 +23,35 @@ function calculateWinner(squares) {
   return null;
 }
 
+function getCoordinates(i) {
+  switch (i) {
+    case 0:
+      return "(1, 1)";
+    case 1:
+      return "(1, 2)";
+    case 2:
+      return "(1, 3)";
+    case 3:
+      return "(2, 1)";
+    case 4:
+      return "(2, 2)";
+    case 5:
+      return "(2, 3)";
+    case 6:
+      return "(3, 1)";
+    case 7:
+      return "(3, 2)";
+    default:
+      return "(3, 3)";
+  }
+}
+
 export default function Game() {
   const [state, setState] = useState({
     history: [
       {
         squares: Array(9).fill(null),
+        position: "",
       },
     ],
     stepNumber: 0,
@@ -56,6 +80,7 @@ export default function Game() {
     setState({
       history: newHistory.concat({
         squares: updatedSquares,
+        position: i,
       }),
       stepNumber: newHistory.length,
       xIsNext: !state.xIsNext,
@@ -79,7 +104,11 @@ export default function Game() {
         <div>{status}</div>
         <ol>
           {history.map((step, move) => {
-            const desc = move ? `Go to move #${move}` : "Go to game start";
+            const desc = move
+              ? `Go to move #${move} with ${
+                  step.squares[step.position]
+                } on ${getCoordinates(step.position)}`
+              : "Go to game start";
 
             return (
               <li key={move}>
