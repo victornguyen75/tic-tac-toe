@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Square from "./Square";
 
 export default function Board() {
+  const [state, setState] = useState({
+    squares: Array(9).fill(null),
+  });
   const status = "Next Player: X";
 
+  const handleClick = (i) => {
+    const updatedSquares = state.squares.slice();
+    updatedSquares[i] = "X";
+    setState({ squares: updatedSquares });
+  };
+
   const renderSquare = (i) => {
-    return <Square value={i} />;
+    return <Square value={state.squares[i]} onClick={() => handleClick(i)} />;
   };
 
   return (
