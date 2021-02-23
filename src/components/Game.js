@@ -61,7 +61,7 @@ export default function Game() {
 
   const history = state.history;
   const current = history[state.stepNumber];
-  const { winningPlayer, winningLine } = calculateWinner(current.squares); // *
+  const { winningPlayer, winningLine } = calculateWinner(current.squares);
   let status = "";
   if (["X", "O"].includes(winningPlayer)) {
     status = `Winner: ${winningPlayer}`;
@@ -74,7 +74,6 @@ export default function Game() {
     const updated = newHistory[newHistory.length - 1];
     const updatedSquares = updated.squares.slice();
     if (calculateWinner(updatedSquares).winningPlayer || updatedSquares[i]) {
-      // *
       return;
     }
 
