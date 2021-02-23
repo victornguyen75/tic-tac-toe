@@ -5,7 +5,13 @@ import Square from "./Square";
 export default function Board(props) {
   let board = [];
   const renderSquare = (i) => {
-    return <Square value={props.squares[i]} onClick={() => props.onClick(i)} />;
+    return (
+      <Square
+        value={props.squares[i]}
+        isWinning={props.winningLine.includes(i)}
+        onClick={() => props.onClick(i)}
+      />
+    );
   };
 
   for (let i = 0; i < 9; i += 3) {
@@ -23,10 +29,12 @@ export default function Board(props) {
 
 Board.propTypes = {
   squares: PropTypes.arrayOf(PropTypes.string),
+  winningLine: PropTypes.arrayOf(PropTypes.number),
   onClick: PropTypes.func,
 };
 
 Board.defaultProps = {
   squares: Array(9).fill(null),
+  winningLine: PropTypes.arrayOf(PropTypes.number),
   onClick: () => {},
 };

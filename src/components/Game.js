@@ -20,7 +20,7 @@ function calculateWinner(squares) {
     }
   }
 
-  return { winningPlayer: null, winningLine: null };
+  return { winningPlayer: null, winningLine: [] };
 }
 
 function getCoordinates(i) {
@@ -127,7 +127,7 @@ export default function Game() {
         <Board
           squares={current.squares}
           onClick={handleClick}
-          winningLine={winningLine}
+          winningLine={winningPlayer ? winningLine : []}
         />
       </div>
       <div className="game-info">
