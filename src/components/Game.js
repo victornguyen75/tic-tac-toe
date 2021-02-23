@@ -30,11 +30,12 @@ export default function Game() {
         squares: Array(9).fill(null),
       },
     ],
+    stepNumber: 0,
     xIsNext: true,
   });
 
   const history = state.history;
-  const current = history[history.length - 1];
+  const current = history[state.stepNumber];
   const winner = calculateWinner(current.squares);
   let status = "";
   if (["X", "O"].includes(winner)) {
@@ -44,17 +45,28 @@ export default function Game() {
   }
 
   const handleClick = (i) => {
-    if (calculateWinner(current.squares) || current.squares[i]) {
+    const newHistory = state.history.slice(0, state.stepNumber + 1);
+    const updated = newHistory[newHistory.length - 1];
+    const updatedSquares = updated.squares.slice();
+    if (calculateWinner(updatedSquares) || updatedSquares[i]) {
       return;
     }
 
-    const updatedSquares = current.squares.slice();
     updatedSquares[i] = state.xIsNext ? "X" : "O";
     setState({
-      history: history.concat({
+      history: newHistory.concat({
         squares: updatedSquares,
       }),
+      stepNumber: newHistory.length,
       xIsNext: !state.xIsNext,
+    });
+  };
+
+  const jumpTo = (step) => {
+    setState({
+      history,
+      stepNumber: step,
+      xIsNext: step % 2 === 0,
     });
   };
 
@@ -65,7 +77,17 @@ export default function Game() {
       </div>
       <div className="game-info">
         <div>{status}</div>
-        <ol></ol>
+        <ol>
+          {history.map((step, move) => {
+            const desc = move ? `Go to move #${move}` : "Go to game start";
+
+            return (
+              <li key={move}>
+                <button onClick={() => jumpTo(move)}>{desc}</button>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </div>
   );
