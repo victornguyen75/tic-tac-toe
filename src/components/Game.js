@@ -15,11 +15,11 @@ import Board from "./Board";
     });
   }
   
- * However, if it was implemented in a functional, "hooked" component, then the state
+ * However, if it is implemented in a functional, "hooked" component, then the state
  * will overwrite the history and isDescending variables.
  * 
  * As a result, the jumpTo function has to be slightly updated for this component:
- 
+ *
  jumpTo(step) {
     this.setState({
       ...state,
